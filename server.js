@@ -56,6 +56,57 @@ app.get("/api/posts/", async (req, res) => {
   }
 });
 
+
+app.get("/api/posts/:id", async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+  if(post){
+    res.status(200).json(post);
+  } else{
+    res.status(404).json({ message: `Post with ${req.params.id} id not found` });
+  }
+  }
+  catch (error) {
+    res.status(500).json({ message: "Error fetching post" });
+  }
+}); 
+
+app.put("/api/posts/:id", async (req, res) => {
+  try {
+    const updatedPost = await Post.findByIdAndUpdate(req.params.id,req.body, {
+    new: true,
+  });
+
+  if(updatedPost){
+    res.status(200).json(updatedPost);  
+  } else{
+    res.status(404).json({ message: `Post with ID${req.params.id} id not found` }); 
+  }
+  }
+ catch (error) { 
+    res.status(500).json({ message: "Error updating post",error}); 
+  }
+});
+
+app.delete("/api/posts/:id", async (req,res) => {
+  try {
+    const deletedpost = await Post.findByIdAndDelete(req.params.id);
+
+    if(deletedpost){
+      res
+        .status(200)
+        .json({ message: `Post with ID ${req.params.id} deleted successfully` });
+    } else {
+      res.status(404).json({ message: `Post with ID ${req.params.id} not found` });
+    }
+  }
+  catch (error) { 
+     res.status(500).json({ message: "Error deleting post",error}); 
+   }
+ });
+
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
